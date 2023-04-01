@@ -4,18 +4,47 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import android.util.Patterns
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewmodel.CreationExtras
 import dev.seabat.android.loginvalid.data.LoginRepository
 import dev.seabat.android.loginvalid.data.Result
 
 import dev.seabat.android.loginvalid.R
 
-class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
+class LoginViewModel(
+    private val loginRepository: LoginRepository,
+    private val savedStateHandle: SavedStateHandle
+) : ViewModel() {
 
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = _loginForm
 
     private val _loginResult = MutableLiveData<LoginResult>()
     val loginResult: LiveData<LoginResult> = _loginResult
+
+    companion object {
+        val EXTRA_LOGIN_REPOSITORY_KEY = object : CreationExtras.Key<LoginRepository> {}
+
+        val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(
+                modelClass: Class<T>,
+                extras: CreationExtras
+            ): T {
+                // Get the Application object from extras
+                val application = checkNotNull(extras[APPLICATION_KEY])
+                // Create a SavedStateHandle for this ViewModel from extras
+                val savedStateHandle = extras.createSavedStateHandle()
+                // viewModels(extrasProducer,) で受け取った extras からオブジェクトを取り出す
+                val loginRepository = extras[EXTRA_LOGIN_REPOSITORY_KEY]!!
+
+                return LoginViewModel(loginRepository, savedStateHandle) as T
+            }
+        }
+    }
 
     fun login(username: String, password: String) {
         // can be launched in a separate asynchronous job

@@ -2,7 +2,6 @@ package dev.seabat.android.loginvalid.ui.login
 
 import android.app.Activity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
@@ -12,24 +11,31 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.lifecycle.viewmodel.MutableCreationExtras
+import dev.seabat.android.loginvalid.LoginApplication
 import dev.seabat.android.loginvalid.databinding.ActivityLoginBinding
 
 import dev.seabat.android.loginvalid.R
+import dev.seabat.android.loginvalid.ui.login.LoginViewModel.Companion.EXTRA_LOGIN_REPOSITORY_KEY
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: LoginViewModel
+    private val viewModel: LoginViewModel by viewModels(
+        extrasProducer = {
+            MutableCreationExtras(defaultViewModelCreationExtras).apply {
+                set(EXTRA_LOGIN_REPOSITORY_KEY, (application as LoginApplication).loginRepository)
+            }
+        },
+        factoryProducer = { LoginViewModel.Factory }
+    )
+
     private lateinit var binding: ActivityLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        viewModel = ViewModelProvider(this, LoginViewModelFactory())
-            .get(LoginViewModel::class.java)
-
         observeLiveData()
         setListener()
     }
