@@ -20,10 +20,12 @@ class LoginViewModel(
 ) : ViewModel() {
 
     private val _loginForm = MutableLiveData<LoginFormState>()
-    val loginFormState: LiveData<LoginFormState> = _loginForm
+    val loginFormState: LiveData<LoginFormState>
+        get() = _loginForm
 
     private val _loginResult = MutableLiveData<LoginResult>()
-    val loginResult: LiveData<LoginResult> = _loginResult
+    val loginResult: LiveData<LoginResult>
+        get() = _loginResult
 
     companion object {
         val EXTRA_LOGIN_REPOSITORY_KEY = object : CreationExtras.Key<LoginRepository> {}
