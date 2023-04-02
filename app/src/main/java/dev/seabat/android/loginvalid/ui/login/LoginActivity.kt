@@ -46,18 +46,24 @@ class LoginActivity : AppCompatActivity() {
         val login = binding.buttonLogin
         val loading = binding.progressbarLoading
 
-        viewModel.loginFormState.observe(this@LoginActivity, Observer {
-            it ?: return@Observer
-
-            // disable login button unless both username / password is valid
-            login.isEnabled = it.isDataValid
-
-            if (it.usernameError != null) {
-                username.error = getString(it.usernameError)
+        viewModel.usernameError.observe(this@LoginActivity, Observer {
+            it?.let {
+                username.error = getString(it)
+            } ?: run {
+                username.error = null
             }
-            if (it.passwordError != null) {
-                password.error = getString(it.passwordError)
+        })
+
+        viewModel.passwordError.observe(this@LoginActivity, Observer {
+            it?.let {
+                password.error = getString(it)
+            } ?: run {
+                password.error = null
             }
+        })
+
+        viewModel.loginEnable.observe(this@LoginActivity, Observer {
+            login.isEnabled = it
         })
 
         viewModel.loginResult.observe(this@LoginActivity, Observer {

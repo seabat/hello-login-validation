@@ -3,12 +3,17 @@ package dev.seabat.android.loginvalid.ui.login
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import android.util.Patterns
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
+import dev.seabat.android.inputvalidator.BaseValidator
+import dev.seabat.android.inputvalidator.EmailValidator
+import dev.seabat.android.inputvalidator.EmptyValidator
+import dev.seabat.android.inputvalidator.ErrorMessage
+import dev.seabat.android.inputvalidator.MinLengthValidator
+import dev.seabat.android.inputvalidator.ValidationException
 import dev.seabat.android.loginvalid.data.LoginRepository
 import dev.seabat.android.loginvalid.data.Result
 
@@ -19,13 +24,22 @@ class LoginViewModel(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _loginForm = MutableLiveData<LoginFormState>()
-    val loginFormState: LiveData<LoginFormState>
-        get() = _loginForm
+    private val _usernameError = MutableLiveData<Int?>()
+    val usernameError: LiveData<Int?>
+        get() = _usernameError
+
+    private val _passwordError = MutableLiveData<Int?>()
+    val passwordError: LiveData<Int?>
+        get() = _passwordError
+
+    private val _loginEnable = MutableLiveData<Boolean>(false)
+    val loginEnable: LiveData<Boolean>
+        get() = _loginEnable
 
     private val _loginResult = MutableLiveData<LoginResult>()
     val loginResult: LiveData<LoginResult>
         get() = _loginResult
+
 
     companion object {
         val EXTRA_LOGIN_REPOSITORY_KEY = object : CreationExtras.Key<LoginRepository> {}
@@ -61,26 +75,28 @@ class LoginViewModel(
     }
 
     fun loginDataChanged(username: String, password: String) {
-        if (!isUserNameValid(username)) {
-            _loginForm.value = LoginFormState(usernameError = R.string.invalid_username)
-        } else if (!isPasswordValid(password)) {
-            _loginForm.value = LoginFormState(passwordError = R.string.invalid_password)
-        } else {
-            _loginForm.value = LoginFormState(isDataValid = true)
-        }
-    }
+        val usernameResult = BaseValidator.validate(
+            EmptyValidator(username, ErrorMessage(resId = R.string.invalid_username)),
+            EmailValidator(username, ErrorMessage(resId = R.string.invalid_username))
+        )
+        val passwordResult = BaseValidator.validate(
+            EmptyValidator(password, ErrorMessage(resId = R.string.invalid_password)),
+            MinLengthValidator(password, 5, ErrorMessage(resId = R.string.invalid_password))
+        )
 
-    // A placeholder username validation check
-    private fun isUserNameValid(username: String): Boolean {
-        return if (username.contains('@')) {
-            Patterns.EMAIL_ADDRESS.matcher(username).matches()
-        } else {
-            username.isNotBlank()
+        if (usernameResult.isSuccess && passwordResult.isSuccess) {
+            _loginEnable.value = true
+            return
         }
-    }
-
-    // A placeholder password validation check
-    private fun isPasswordValid(password: String): Boolean {
-        return password.length > 5
+        if (usernameResult.isFailure) {
+            _usernameError.value = (usernameResult.exceptionOrNull() as ValidationException).error.resId
+        } else {
+            _usernameError.value = null
+        }
+        if (passwordResult.isFailure) {
+            _passwordError.value = (passwordResult.exceptionOrNull() as ValidationException).error.resId
+        } else {
+            _passwordError.value = null
+        }
     }
 }
