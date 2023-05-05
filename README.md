@@ -6,6 +6,8 @@
 
 ### 構成
 
+<img src="docs/module.png" width="300">
+
 * app モジュール  
   Android Studio の Login Activity テンプレート がベース。  
 * input_validator モジュール  

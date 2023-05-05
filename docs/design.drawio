@@ -1,0 +1,22 @@
+<mxfile host="Electron" modified="2023-05-05T12:36:29.619Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.2.8 Chrome/112.0.5615.165 Electron/24.2.0 Safari/537.36" etag="XAUKN1veBtJSHWrnFCjW" version="21.2.8" type="device">
+  <diagram name="ページ1" id="A8MF37iSTBmzN6kcFkt5">
+    <mxGraphModel dx="954" dy="674" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="sO4-BR6UUCprgEyK0BoY-1" value="app" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="190" y="180" width="130" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="sO4-BR6UUCprgEyK0BoY-2" value="input_validator" style="shape=module;align=left;spacingLeft=20;align=center;verticalAlign=top;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="420" y="220" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="sO4-BR6UUCprgEyK0BoY-4" value="Use" style="endArrow=open;endSize=12;dashed=1;html=1;rounded=0;" edge="1" parent="1" source="sO4-BR6UUCprgEyK0BoY-1" target="sO4-BR6UUCprgEyK0BoY-2">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="320" y="205" as="sourcePoint" />
+            <mxPoint x="480" y="205" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
